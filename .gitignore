@@ -1,0 +1,10 @@
+node_modules/
+.env
+.history/
+
+# Local Netlify folder
+.netlify
+
+
+
+package-lock.json
