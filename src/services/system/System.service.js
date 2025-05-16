@@ -2,7 +2,7 @@ const { loadRoutePermissions } = require("../../middleware/RoutePermissionMiddle
 const RouteManage = require("../../models/system/RouterManage");
 const LogRequest = require("../../models/system/LogRequest");
 const User = require("../../models/user/User");
-const Booking = require("../../models/hotel/Booking")
+
 
 class SystemService {
   async getAllRoute(){

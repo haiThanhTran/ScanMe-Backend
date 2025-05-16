@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const AdminController = require("../../controllers/admin/Admin.controller");
-const FacilityControllers = require("../../controllers/facility/Facility.controller"); // Controller mới cho facility
 const { checkPermission } = require("../../middleware/AuthPermission");
 
 /**
@@ -170,7 +169,6 @@ router.put("/rolePermission", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), 
  *                     type: string
  *                     enum: [PENDING, APPROVED, REJECTED, COMPLETED]
  */
-router.get("/booking", checkPermission(["SUPER", "MANAGER_BOOKING_ADMIN"]), AdminController.getAllBooking);
 
 /**
  * @swagger
@@ -208,7 +206,6 @@ router.get("/booking", checkPermission(["SUPER", "MANAGER_BOOKING_ADMIN"]), Admi
  *       400:
  *         description: Dữ liệu không hợp lệ
  */
-router.post("/booking", checkPermission(["SUPER", "MANAGER_BOOKING_ADMIN"]), AdminController.createNewBooking);
 
 /**
  * @swagger
@@ -249,7 +246,6 @@ router.post("/booking", checkPermission(["SUPER", "MANAGER_BOOKING_ADMIN"]), Adm
  *       404:
  *         description: Không tìm thấy đơn đặt phòng
  */
-router.put("/booking", checkPermission(["SUPER", "MANAGER_BOOKING_ADMIN"]), AdminController.updateBooking);
 
 /**
  * @swagger
@@ -270,7 +266,6 @@ router.put("/booking", checkPermission(["SUPER", "MANAGER_BOOKING_ADMIN"]), Admi
  *       404:
  *         description: Không tìm thấy đơn đặt phòng
  */
-router.get("/booking/:id", checkPermission(["SUPER", "MANAGER_BOOKING_ADMIN"]), AdminController.deleteBooking);
 
 // Thêm các route cho quản lý vật tư (facility) cùng với Swagger
 
@@ -300,7 +295,6 @@ router.get("/booking/:id", checkPermission(["SUPER", "MANAGER_BOOKING_ADMIN"]), 
  *                     type: string
  *                     format: date-time
  */
-router.get("/facility", FacilityControllers.getAllFacilities);
 
 /**
  * @swagger
@@ -335,7 +329,6 @@ router.get("/facility", FacilityControllers.getAllFacilities);
  *       404:
  *         description: Không tìm thấy vật tư
  */
-router.get("/facility/:id", FacilityControllers.getFacilityById);
 
 /**
  * @swagger
@@ -376,7 +369,6 @@ router.get("/facility/:id", FacilityControllers.getFacilityById);
  *       400:
  *         description: Lỗi khi tạo vật tư
  */
-router.post("/facility", FacilityControllers.createFacility);
 
 /**
  * @swagger
@@ -426,7 +418,6 @@ router.post("/facility", FacilityControllers.createFacility);
  *       400:
  *         description: Lỗi khi cập nhật vật tư
  */
-router.put("/facility/:id", FacilityControllers.updateFacility);
 
 /**
  * @swagger
@@ -457,6 +448,5 @@ router.put("/facility/:id", FacilityControllers.updateFacility);
  *       500:
  *         description: Lỗi khi xóa vật tư
  */
-router.delete("/facility/:id", FacilityControllers.deleteFacility);
 
 module.exports = router;

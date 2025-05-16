@@ -1,6 +1,5 @@
 const {resExport} = require("../../enums/resExport");
 const AdminService = require("../../services/admin/Admin.service");
-const ManagerBookingService = require("../../services/admin/ManageBooking.service");
 const {MESSAGE} = require("../../messages/message");
 
 class AdminController {
@@ -67,41 +66,7 @@ class AdminController {
         }
     }
 
-    async getAllBooking(req, res){
-        try{
-            const resData = await ManagerBookingService.getAllBooking();
-            resExport(MESSAGE.SUCCESS.status, MESSAGE.SUCCESS.message, resData, res)
-        }catch (e) {
-            resExport(MESSAGE.ERROR.status, e.message, null, res);
-        }
-    }
-
-    async createNewBooking(req, res){
-        try{
-            const resData = await ManagerBookingService.createBooking(req.body);
-            resExport(MESSAGE.SUCCESS.status, MESSAGE.SUCCESS.message, resData, res)
-        }catch (e) {
-            resExport(MESSAGE.ERROR.status, e.message, null, res);
-        }
-    }
-
-    async updateBooking(req, res){
-        try{
-            const resData = await ManagerBookingService.updateBooking(req.body);
-            resExport(MESSAGE.SUCCESS.status, MESSAGE.SUCCESS.message, resData, res)
-        }catch (e) {
-            resExport(MESSAGE.ERROR.status, e.message, null, res);
-        }
-    }
-
-    async deleteBooking(req, res){
-        try{
-            const resData = await ManagerBookingService.deleteBooking(req.params.id);
-            resExport(MESSAGE.SUCCESS.status, MESSAGE.SUCCESS.message, resData, res)
-        }catch (e) {
-            resExport(MESSAGE.ERROR.status, e.message, null, res);
-        }
-    }
+    
 }
 
 module.exports = new AdminController();
