@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const AdminController = require("../../controllers/admin/Admin.controller");
 const { checkPermission } = require("../../middleware/AuthPermission");
+const VoucherRoute = require("./Voucher.route");
 
 /**
  * @swagger
@@ -17,7 +18,11 @@ const { checkPermission } = require("../../middleware/AuthPermission");
  *     summary: Lấy danh sách vai trò (roles)
  *     tags: [Admin]
  */
-router.get("/role", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminController.getRole);
+router.get(
+  "/role",
+  checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]),
+  AdminController.getRole
+);
 
 /**
  * @swagger
@@ -45,7 +50,11 @@ router.get("/role", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminContr
  *                  type: string
  *                  example: "#ff0000"
  */
-router.post("/role", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminController.createRole);
+router.post(
+  "/role",
+  checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]),
+  AdminController.createRole
+);
 
 /**
  * @swagger
@@ -70,7 +79,11 @@ router.post("/role", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminCont
  *                  type: string
  *                  example: "#ff0000"
  */
-router.put("/role", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminController.updateRole);
+router.put(
+  "/role",
+  checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]),
+  AdminController.updateRole
+);
 
 /**
  * @swagger
@@ -79,7 +92,11 @@ router.put("/role", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminContr
  *     summary: Lấy danh sách quyền (permissions)
  *     tags: [Admin]
  */
-router.get("/permission", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminController.getPermission);
+router.get(
+  "/permission",
+  checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]),
+  AdminController.getPermission
+);
 
 /**
  * @swagger
@@ -104,7 +121,11 @@ router.get("/permission", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), Admi
  *                  type: string
  *                  example: "description"
  */
-router.post("/permission", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminController.createPermission);
+router.post(
+  "/permission",
+  checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]),
+  AdminController.createPermission
+);
 
 /**
  * @swagger
@@ -113,7 +134,11 @@ router.post("/permission", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), Adm
  *     summary: Lấy danh sách quyền theo vai trò (role-permissions)
  *     tags: [Admin]
  */
-router.get("/rolePermission", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminController.getRolePermission);
+router.get(
+  "/rolePermission",
+  checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]),
+  AdminController.getRolePermission
+);
 
 /**
  * @swagger
@@ -135,7 +160,11 @@ router.get("/rolePermission", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), 
  *                 type: array
  *                 example: ["PERMISSION_CODE_1", "PERMISSION_CODE_2"]
  */
-router.put("/rolePermission", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), AdminController.updateRolePermission);
+router.put(
+  "/rolePermission",
+  checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]),
+  AdminController.updateRolePermission
+);
 
 /**
  * @swagger
@@ -448,5 +477,7 @@ router.put("/rolePermission", checkPermission(["SUPER", "MANAGER_ROLE_ADMIN"]), 
  *       500:
  *         description: Lỗi khi xóa vật tư
  */
+
+router.use("/voucher", VoucherRoute);
 
 module.exports = router;
