@@ -9,6 +9,7 @@ const StoreSchema = new Schema({
   phone: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  userId: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
-module.exports = mongoose.model("Store", StoreSchema,"Store");
+module.exports = mongoose.model("Store", StoreSchema, "Store");

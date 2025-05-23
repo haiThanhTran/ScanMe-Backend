@@ -7,6 +7,7 @@
     "clean": "del-cli dist logs && mkdir dist logs",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon functions/server.js",
+    "dev": "nodemon functions/server.js",
     "build": "npm run clean && nodemon functions/server.js",
     "production": "npm run build && cross-env NODE_ENV=production node functions/server.js"
   },

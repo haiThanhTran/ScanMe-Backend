@@ -23,7 +23,7 @@ const setupSessionMiddleware = (app) => {
       },
     })
   );
-  
+
   // Khởi tạo passport
   app.use(passport.initialize());
   app.use(passport.session());
