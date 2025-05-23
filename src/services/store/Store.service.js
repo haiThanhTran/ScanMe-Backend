@@ -1,5 +1,5 @@
-const Store = require("../../models/Store");
 const User = require("../../models/user/User");
+const Store = require("../../models/Store/Store");
 
 const StoreService = {
   async create(data) {

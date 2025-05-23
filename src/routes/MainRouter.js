@@ -7,8 +7,9 @@ const systemRouter = require("./system/System.route");
 
 const RegisterRouter = require("./register/Register.route");
 const VoucherPublicRoute = require("./admin/Voucher.route");
-const CategoryRoute = require("./Category.route");
-const StoreRoute = require("./Store.route");
+const CategoryRoute = require("./Category/Category.route");
+const StoreRoute = require("./Store/Store.route");
+const productRoute=require("./Product/Product.route")
 
 router.use("/api/admin", adminRouter);
 router.use("/api/auth", authRouter);
@@ -16,7 +17,8 @@ router.use("/api/user", ProfileRoute);
 router.use("/api/system", systemRouter);
 router.use("/api/register", RegisterRouter);
 router.use("/api/voucher", VoucherPublicRoute);
-router.use("/api/category", CategoryRoute);
-router.use("/api/store", StoreRoute);
+router.use("/api/categories", CategoryRoute);
+router.use("/api/stores", StoreRoute);
+router.use("/api/products", productRoute);
 
 module.exports = router;

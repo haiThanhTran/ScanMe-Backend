@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 const secret = require("../configs/Secrets");
 const User = require("../models/user/User");
 const BlacklistedToken = require("../models/token/BlacklistedToken");
-require('dotenv').config();
-const {getPermissionsForUser} = require('../database/db');
+require("dotenv").config();
+const { getPermissionsForUser } = require("../database/db");
 
 // Simple user cache to reduce database queries
 const userCache = new Map();
@@ -16,18 +16,18 @@ const getUserById = async (userId) => {
   if (cachedUser && cachedUser.timestamp > Date.now() - USER_CACHE_TTL) {
     return cachedUser.user;
   }
-  
+
   // Get user from database
   const user = await User.findById(userId);
-  
+
   // Update cache
   if (user) {
     userCache.set(userId, {
       user,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
-  
+
   return user;
 };
 
@@ -38,7 +38,7 @@ const isTokenBlacklisted = async (token) => {
     const exists = await BlacklistedToken.exists({ token });
     return !!exists;
   } catch (error) {
-    console.error('Error checking blacklisted token:', error);
+    console.error("Error checking blacklisted token:", error);
     return false;
   }
 };
@@ -56,7 +56,7 @@ const auth = async (req, res, next) => {
 
     const token = authHeader.replace("Bearer ", "");
 
-    console.log(token)
+    console.log(token);
 
     // Check if token is blacklisted
     if (await isTokenBlacklisted(token)) {
@@ -65,12 +65,12 @@ const auth = async (req, res, next) => {
         message: "Unauthorized: Token has been invalidated",
       });
     }
-    
+
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     } catch (error) {
-      if (error.name === 'TokenExpiredError') {
+      if (error.name === "TokenExpiredError") {
         return res.status(401).json({
           status: 401,
           message: "Đã hết phiên đăng nhập vui lòng đăng nhập lại !",
@@ -102,7 +102,7 @@ const auth = async (req, res, next) => {
       });
     }
 
-    if(user.status === "00"){
+    if (user.status === "00") {
       return res.status(401).json({
         status: 401,
         message: "Tài khoản đã bị khóa hoặc vô hiệu hóa !",
@@ -119,12 +119,11 @@ const auth = async (req, res, next) => {
   }
 };
 
-
 auth.invalidateToken = async (token) => {
-  if (token && token.startsWith('Bearer ')) {
-    token = token.replace('Bearer ', '');
+  if (token && token.startsWith("Bearer ")) {
+    token = token.replace("Bearer ", "");
   }
-  
+
   try {
     let expiryDate;
     try {
@@ -140,10 +139,10 @@ auth.invalidateToken = async (token) => {
 
     await BlacklistedToken.create({
       token,
-      expiresAt: expiryDate
+      expiresAt: expiryDate,
     });
   } catch (error) {
-    console.error('Error invalidating token:', error);
+    console.error("Error invalidating token:", error);
   }
 };
 
@@ -161,10 +160,10 @@ const cleanupBlacklist = async () => {
   try {
     // Xóa token đã hết hạn
     await BlacklistedToken.deleteMany({
-      expiresAt: { $lt: new Date() }
+      expiresAt: { $lt: new Date() },
     });
   } catch (error) {
-    console.error('Error cleaning up blacklist:', error);
+    console.error("Error cleaning up blacklist:", error);
   }
 };
 
