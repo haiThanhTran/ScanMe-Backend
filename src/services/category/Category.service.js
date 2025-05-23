@@ -1,4 +1,4 @@
-const Category = require("../../models/Category");
+const Category = require("../../models/Category/Category");
 
 const CategoryService = {
   async create(data) {
@@ -6,7 +6,7 @@ const CategoryService = {
     return await category.save();
   },
   async getAll() {
-    return await Category.find({ isActive: true }).sort({ createdAt: -1 });
+    return await Category.find({}).sort({ createdAt: -1 });
   },
   async getById(id) {
     return await Category.findById(id);

@@ -1,5 +1,5 @@
-const Voucher = require("../../models/Voucher");
-const Store = require("../../models/Store");
+const Voucher = require("../../models/Voucher/Voucher");
+const Store = require("../../models/Store/Store");
 
 // Lấy danh sách voucher, filter, phân trang
 exports.getVouchers = async (req, res) => {
