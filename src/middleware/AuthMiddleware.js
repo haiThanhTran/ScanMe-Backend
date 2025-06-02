@@ -56,7 +56,6 @@ const auth = async (req, res, next) => {
 
     const token = authHeader.replace("Bearer ", "");
 
-    console.log(token);
 
     // Check if token is blacklisted
     if (await isTokenBlacklisted(token)) {

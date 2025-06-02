@@ -15,7 +15,7 @@ app.use(cors());
 app.use(helmet());
 app.use(cookieParser());
 app.use(handleCSRFError);
-app.use(standardLimiter);
+// app.use(standardLimiter);
 require("../src/configs/Auth");
 
 const { connect } = require('../src/database/db');

@@ -9,7 +9,6 @@ const { sendVerificationEmail } = require("../../configs/EmailServices"); // Đi
 exports.registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    console.log("req", req.body);
 
     const emailExist = await RegisterService.findUserByEmail(email);
     if (emailExist) return res.status(400).json({ error: "Email đã tồn tại" });
@@ -39,14 +38,14 @@ exports.registerUser = async (req, res) => {
       roleId: roleIdToAssign, // Gán ObjectId của vai trò "customer"
       verified: false,
       verificationToken,
-      status: "00"
+      status: "00",
     };
 
     await RegisterService.createUser(userData);
 
     const verificationLink = `${req.protocol}://${req.get(
       "host"
-    )}/register/verify/${verificationToken}`;
+    )}/api/register/verify/${verificationToken}`;
 
     // Gửi email xác minh bằng hàm tái sử dụng
     await sendVerificationEmail(username, email, verificationLink);
@@ -74,9 +73,27 @@ exports.verifyUser = async (req, res) => {
     user.status = "01"; // Xóa token sau khi xác minh
     await user.save();
 
-    res.json({
-      message: "Tài khoản đã được xác minh thành công, bạn có thể đăng nhập",
-    });
+    res.send(`
+      <html>
+        <head>
+          <title>Xác minh thành công</title>
+          <style>
+            body { background: #fffbe6; font-family: sans-serif; text-align: center; padding-top: 80px; }
+            .box { display: inline-block; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px #ffb74d44; padding: 40px 60px; }
+            .icon { font-size: 60px; color: #ff9800; }
+            .btn { margin-top: 30px; display: inline-block; background: #ff9800; color: #fff; padding: 10px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <div class="box">
+            <h1>ScanMe Chúc Mừng Bạn!</h1>
+            <h2>Tài khoản đã được xác minh thành công!</h2>
+            <p>Bạn có thể đăng nhập ngay bây giờ.</p>
+            <a class="btn" href="http://localhost:5173/login">Đăng nhập</a>
+          </div>
+        </body>
+      </html>
+    `);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

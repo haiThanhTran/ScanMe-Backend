@@ -19,7 +19,7 @@ const sendVerificationEmail = async (username, email, verificationLink) => {
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
         <div style="text-align: center; padding-bottom: 20px;">
-          <img src="" alt="LuxStay Logo" style="width: 150px; height: auto;" />
+          <h1 style="color: #E13621; text-align: center;">ScanMe</h1>
         </div>
         <div style="background-color: #ffffff; padding: 20px; border-radius: 8px;">
           <h2 style="color: #2988BC; text-align: center;">Xác minh tài khoản</h2>
@@ -27,17 +27,17 @@ const sendVerificationEmail = async (username, email, verificationLink) => {
             Xin chào <strong>${username}</strong>,
           </p>
           <p style="color: #333; font-size: 16px; text-align: center;">
-            Cảm ơn bạn đã đăng ký tại LuxStay. Để hoàn tất quá trình đăng ký, vui lòng nhấp vào nút bên dưới để xác minh địa chỉ email của bạn.
+            Cảm ơn bạn đã đăng ký tại ScanMe. Để hoàn tất quá trình đăng ký, vui lòng nhấp vào nút bên dưới để xác minh địa chỉ email của bạn.
           </p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${verificationLink}" style="background-color: #2988BC; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Xác minh ngay</a>
+            <a href="${verificationLink}" style="background-color: #E13621; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Xác minh ngay</a>
           </div>
           <p style="color: #333; font-size: 14px; text-align: center;">
             Nếu bạn không thực hiện đăng ký, vui lòng bỏ qua email này.
           </p>
         </div>
         <div style="text-align: center; padding-top: 20px; color: #999; font-size: 12px;">
-          <p>&copy; 2024 LuxStay. Tất cả các quyền được bảo lưu.</p>
+          <p>&copy; 2025 ScanMe. Tất cả các quyền được bảo lưu.</p>
         </div>
       </div>
     `,
