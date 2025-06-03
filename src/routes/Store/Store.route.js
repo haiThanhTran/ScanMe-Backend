@@ -5,7 +5,21 @@ const AuthMiddleware = require("../../middleware/AuthMiddleware");
 const { checkPermission } = require("../../middleware/AuthPermission");
 
 // Public: Lấy tất cả store
-router.get("/", StoreController.getAll);
+router.get("/",
+  StoreController.getAll);
+// User: Lấy store theo userId
+router.get(
+  "/store-by-userId",
+  AuthMiddleware,
+  StoreController.getStoreByUserId
+);
+
+// User: Cập nhật store theo userId
+router.put(
+  "/update/store-by-userId",
+  AuthMiddleware,
+  StoreController.updateStoreByUserId
+);
 // Public: Lấy store theo id
 router.get("/:id", StoreController.getById);
 // Admin: Tạo store
@@ -29,5 +43,7 @@ router.delete(
   checkPermission(["ADMIN", "MANAGER_STORE"]),
   StoreController.delete
 );
+
+
 
 module.exports = router;

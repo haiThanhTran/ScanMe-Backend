@@ -1,6 +1,6 @@
-const {getPermissionsForUser} = require('../database/db')
+const { getPermissionsForUser } = require('../database/db')
 
-function checkPermission(permission){
+function checkPermission(permission) {
   return async function (req, res, next) {
     try {
       const userPermissions = await getPermissionsForUser(req.account.userId);
@@ -21,4 +21,4 @@ function checkPermission(permission){
   };
 }
 
-module.exports = {checkPermission}
+module.exports = { checkPermission }
