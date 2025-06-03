@@ -13,6 +13,11 @@ router.get(
     "/",
     OrderController.getOrdersByUserId
 );
+router.patch(
+    "/:id/status",
+    // checkPermission("STORE_MANAGER"),
+    OrderController.changeOrderStatus
+);
 router.get(
     "/:id",
     OrderController.getOrderById

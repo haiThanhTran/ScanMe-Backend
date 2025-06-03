@@ -1,5 +1,7 @@
 const Order = require('../../models/Orders/Order');
 const Store = require('../../models/Store/Store');
+const Voucher = require('../../models/Voucher/Voucher');
+const Product = require('../../models/Product/Product');
 
 const OrderService = {
 
@@ -27,6 +29,23 @@ const OrderService = {
             limit,
             orders
         };
+    },
+    async changeOrderStatus(id, status) {
+        const validStatuses = ["pending", "confirmed", "cancelled"];
+        if (!validStatuses.includes(status)) {
+            throw new Error("Invalid status");
+        }
+
+        const order = await Order.findByIdAndUpdate(id, { status }, { new: true })
+            .populate('userId')
+            .populate('items.productId')
+            .populate('appliedVouchers.voucherId');
+
+        if (!order) {
+            throw new Error("Order not found");
+        }
+
+        return order;
     },
 
 
