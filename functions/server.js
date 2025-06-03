@@ -11,7 +11,7 @@ const { standardLimiter } = require("../src/middleware/RateLimitMiddleware");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(logRequest);
-app.use(cors());
+//app.use(cors());
 app.use(helmet());
 app.use(cookieParser());
 app.use(handleCSRFError);
