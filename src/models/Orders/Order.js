@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const OrderSchema = new Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  storeId: { type: mongoose.Schema.Types.ObjectId, ref: "Store", required: true },
   items: [
     {
       productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
@@ -44,4 +45,4 @@ const OrderSchema = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Order", OrderSchema,"Order");
+module.exports = mongoose.model("Order", OrderSchema, "Order");

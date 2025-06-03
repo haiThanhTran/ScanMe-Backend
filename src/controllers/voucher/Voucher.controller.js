@@ -1,1 +1,0 @@
-const Voucher = require('../../models/Voucher');

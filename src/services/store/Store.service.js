@@ -27,7 +27,6 @@ const StoreService = {
     if (!store) {
       throw new Error("Store not found11");
     }
-    console.log("store", store._id);
 
     const updatedStore = await Store.findByIdAndUpdate(
       store._id,
