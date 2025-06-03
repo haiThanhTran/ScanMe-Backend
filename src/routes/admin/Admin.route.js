@@ -127,6 +127,8 @@ router.post(
   AdminController.createPermission
 );
 
+router.get("/dashboard-overview", AdminController.dashboardOverview);
+
 /**
  * @swagger
  * /admin/rolePermission:
@@ -479,5 +481,20 @@ router.put(
  */
 
 router.use("/voucher", VoucherRoute);
+
+// Lấy danh sách người dùng (GET, có phân trang, tìm kiếm)
+router.get("/users", AdminController.getUsers);
+
+// Thêm người dùng mới
+router.post("/users", AdminController.createUser);
+
+// Chỉnh sửa thông tin người dùng
+router.put("/users/:id", AdminController.updateUser);
+
+// Xóa người dùng
+router.delete("/users/:id", AdminController.deleteUser);
+
+// Đổi vai trò người dùng (có thể gộp vào updateUser)
+router.patch("/users/:id/role", AdminController.updateUserRole);
 
 module.exports = router;
