@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const StoreController = require("../controllers/store/StoreController");
-const AuthMiddleware = require("../middleware/AuthMiddleware");
-const { checkPermission } = require("../middleware/AuthPermission");
+const StoreController = require("../../controllers/store/StoreController");
+const AuthMiddleware = require("../../middleware/AuthMiddleware");
+const { checkPermission } = require("../../middleware/AuthPermission");
 
 // Public: Lấy tất cả store
 router.get("/", StoreController.getAll);
