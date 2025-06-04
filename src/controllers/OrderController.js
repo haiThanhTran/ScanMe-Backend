@@ -82,6 +82,30 @@ const OrderController = {
       res.status(400).json({ success: false, message: error.message });
     }
   },
+
+  createFeedBack: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const feedBack = req.body;
+
+      if (!orderId || rating === undefined) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Thiếu thông tin." });
+      }
+
+      const feedbackResult = await OrderService.feedBackOrder(
+        orderId,
+        userId,
+        feedBack
+      );
+
+      res.status(201).json({ success: true, data: feedbackResult });
+    } catch (error) {
+      console.error("Error in OrderController.createFeedBack:", error.message);
+      res.status(400).json({ success: false, message: error.message });
+    }
+  }
 };
 
 module.exports = OrderController;
