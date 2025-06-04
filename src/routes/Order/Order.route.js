@@ -12,4 +12,11 @@ router.get("/user/me", auth, OrderController.getOrdersByUserId);
 // Route để lấy chi tiết đơn hàng theo ID (yêu cầu xác thực)
 router.get("/:id", auth, OrderController.getOrderById);
 
+// Thêm route PATCH cho cập nhật trạng thái đơn hàng
+router.patch(
+  "/user/update-status",
+  auth,
+  OrderController.updateOrderStatusByUser
+);
+
 module.exports = router;

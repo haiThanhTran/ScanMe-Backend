@@ -89,7 +89,7 @@ exports.verifyUser = async (req, res) => {
             <h1>ScanMe Chúc Mừng Bạn!</h1>
             <h2>Tài khoản đã được xác minh thành công!</h2>
             <p>Bạn có thể đăng nhập ngay bây giờ.</p>
-            <a class="btn" href="http://localhost:5173/login">Đăng nhập</a>
+            <a class="btn" href="https://scan-me-frontend.vercel.app/login">Đăng nhập</a>
           </div>
         </body>
       </html>
