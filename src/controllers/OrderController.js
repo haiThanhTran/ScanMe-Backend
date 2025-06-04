@@ -10,10 +10,17 @@ const OrderController = {
       const { items, shippingInfo, totalAmount } = req.body;
 
       if (!items || !shippingInfo || totalAmount === undefined) {
-        return res.status(400).json({ success: false, message: "Thiếu thông tin đơn hàng." });
+        return res
+          .status(400)
+          .json({ success: false, message: "Thiếu thông tin đơn hàng." });
       }
 
-      const orderResult = await OrderService.placeOrder(userId, items, shippingInfo, totalAmount);
+      const orderResult = await OrderService.placeOrder(
+        userId,
+        items,
+        shippingInfo,
+        totalAmount
+      );
 
       res.status(201).json({ success: true, data: orderResult });
     } catch (error) {
@@ -29,7 +36,10 @@ const OrderController = {
       const orders = await OrderService.getOrdersByUserId(userId);
       res.json({ success: true, data: orders });
     } catch (error) {
-      console.error("Error in OrderController.getOrdersByUserId:", error.message);
+      console.error(
+        "Error in OrderController.getOrdersByUserId:",
+        error.message
+      );
       res.status(500).json({ success: false, message: error.message });
     }
   },
@@ -49,6 +59,27 @@ const OrderController = {
     } catch (error) {
       console.error("Error in OrderController.getOrderById:", error.message);
       res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
+  updateOrderStatusByUser: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { orderId, newStatus, cancellationReason } = req.body;
+      if (!orderId || !newStatus) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Thiếu thông tin." });
+      }
+      const updatedOrder = await OrderService.updateOrderStatusByUser(
+        orderId,
+        userId,
+        newStatus,
+        cancellationReason
+      );
+      res.json({ success: true, data: updatedOrder });
+    } catch (error) {
+      res.status(400).json({ success: false, message: error.message });
     }
   },
 };
