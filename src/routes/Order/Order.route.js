@@ -19,4 +19,10 @@ router.patch(
   OrderController.updateOrderStatusByUser
 );
 
+router.post(
+  "/user/feedback",
+  auth,
+  OrderController.createFeedBack
+);
+
 module.exports = router;

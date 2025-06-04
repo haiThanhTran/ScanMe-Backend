@@ -22,6 +22,18 @@ const ProductSchema = new Schema({
     ref: "Store",
     required: true,
   },
+  feedBack: [
+    {
+      userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      rating: { type: Number, required: true },
+      comment: { type: String },
+      createdAt: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 module.exports = mongoose.model("Product", ProductSchema, "Product");
