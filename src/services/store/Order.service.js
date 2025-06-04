@@ -18,8 +18,7 @@ const OrderService = {
                 .skip(skip)
                 .limit(limit)
                 .populate('userId')
-                .populate('items.productId')
-                .populate('appliedVouchers.voucherId'),
+                .populate('items.productId'),
             Order.countDocuments({ storeId: store._id })
         ]);
 
@@ -39,7 +38,6 @@ const OrderService = {
         const order = await Order.findByIdAndUpdate(id, { status }, { new: true })
             .populate('userId')
             .populate('items.productId')
-            .populate('appliedVouchers.voucherId');
 
         if (!order) {
             throw new Error("Order not found");
@@ -52,7 +50,6 @@ const OrderService = {
     async getOrderById(id) {
         return await Order.findById(id).populate('userId')
             .populate('items.productId')
-            .populate('appliedVouchers.voucherId');
     },
 
 };
