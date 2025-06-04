@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Order = require("../models/Orders/Order");
 const User = require("../models/user/User");
 const Voucher = require("../models/Voucher/Voucher");
+const Product = require("../models/Product/Product");
 const ProductModel = mongoose.model("Product");
 
 const OrderService = {
@@ -226,6 +227,7 @@ const OrderService = {
           status: "pending",
           paymentMethod: "COD",
           paymentStatus: "pending",
+          // canCancel: false,
         };
 
         const order = new Order(newOrderData);
@@ -341,6 +343,47 @@ const OrderService = {
     }
   },
 
+  // updateOrderStatusByUser: async (
+  //   orderId,
+  //   userId,
+  //   newStatus,
+  //   cancellationReason
+  // ) => {
+  //   try {
+  //     // Tìm đơn hàng theo id và userId
+  //     const order = await Order.findOne({ _id: orderId, userId });
+  //     if (!order) throw new Error("Không tìm thấy đơn hàng.");
+
+  //     // Nếu đơn không phải trạng thái pending thì không được hủy
+  //     if (order.status !== "pending")
+  //       throw new Error("Chỉ có thể hủy đơn ở trạng thái chờ xác nhận.");
+
+  //     // Kiểm tra nếu người dùng muốn hủy đơn
+  //     if (newStatus === "cancelled") {
+  //       const now = new Date();
+  //       const createdAt = new Date(order.createdAt);
+  //       const diffMinutes = (now - createdAt) / (1000 * 60);
+
+  //       if (diffMinutes < 5) {
+  //         throw new Error("Không thể hủy đơn trong vòng 5 phút đầu tiên.");
+  //       }
+
+  //       // Nếu cửa hàng đã xác nhận đơn (status confirmed), không cho hủy
+  //       if (order.status === "confirmed") {
+  //         throw new Error("Đơn đã được xác nhận, không thể hủy.");
+  //       }
+
+  //       order.cancellationReason = cancellationReason || "Không rõ lý do";
+  //     }
+
+  //     order.status = newStatus;
+  //     await order.save();
+
+  //     return order;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // },
   updateOrderStatusByUser: async (
     orderId,
     userId,
@@ -364,6 +407,40 @@ const OrderService = {
       throw error;
     }
   },
+
+  feedBackOrder: async (orderId, userId, feedback) => {
+    try {
+      const order = await Order.findOne({ _id: orderId, userId });
+      if (!order) throw new Error("Không tìm thấy đơn hàng.");
+
+      if (order.status !== "completed") {
+        throw new Error("Chỉ có thể gửi phản hồi cho đơn hàng đã hoàn thành.");
+      }
+
+      for (const item of order.items) {
+        const product = await Product.findById(item.productId);
+        if (!product) continue;
+
+        if (!product.feedBack) {
+          product.feedBack = [];
+        }
+
+        product.feedBack.push({
+          userId,
+          comment: feedback.comment,
+          rating: feedback.rating,
+          createdAt: new Date(),
+        });
+
+        await product.save();
+      }
+
+      return { message: "Gửi phản hồi thành công." };
+    } catch (error) {
+      throw error;
+    }
+  }
+
 };
 
 module.exports = OrderService;

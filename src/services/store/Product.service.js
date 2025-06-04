@@ -11,7 +11,8 @@ const ProductService = {
         const newData = {
             ...data,
             isActive: true,
-            storeId: store._id
+            storeId: store._id,
+            feedBack: [],
         };
         const product = new Product(newData);
         return await product.save();
