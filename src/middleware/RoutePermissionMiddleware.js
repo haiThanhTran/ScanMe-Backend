@@ -17,10 +17,10 @@ const loadRoutePermissions = async () => {
       (r) => r.requireToken === false && r.status === "01"
     );
 
-    routePermissionsMap.clear(); 
+    routePermissionsMap.clear();
     publicRoutes.forEach(route => {
       if (!route.path) return; // Skip invalid routes
-      
+
       const key = `${route.method}:${route.path}`;
       const regex = pathToRegex(route.path);
       routePermissionsMap.set(key, { method: route.method, path: route.path, regex });
@@ -62,7 +62,7 @@ const initializeRoutePermissions = async () => {
   await loadRoutePermissions();
 
   if (process.env.NODE_ENV !== 'production') {
-    console.log("✅ Public routes loaded:", routePermissionsCache.length);
+    console.log("✅ Public routes loaded:", routePermissionsCache?.length);
   }
 
   setInterval(async () => {
