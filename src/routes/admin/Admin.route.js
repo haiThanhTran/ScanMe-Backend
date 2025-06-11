@@ -497,4 +497,7 @@ router.delete("/users/:id", AdminController.deleteUser);
 // Đổi vai trò người dùng (có thể gộp vào updateUser)
 router.patch("/users/:id/role", AdminController.updateUserRole);
 
+router.get("/orders", AdminController.getAllOrders);
+router.get("/orders/export", AdminController.exportOrdersExcel);
+
 module.exports = router;

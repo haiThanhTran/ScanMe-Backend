@@ -6,10 +6,10 @@ const { checkPermission } = require("../../middleware/AuthPermission");
 
 // Public routes
 router.get("/", ProductController.getAllProducts);
+router.get("/flash-sale", ProductController.getFlashSaleProducts);
 router.get("/:id", ProductController.getProductById);
 router.get("/store/:storeId", ProductController.getProductsByStore);
 router.get("/category/:categoryId", ProductController.getProductsByCategory);
-
 // Protected routes (require authentication)
 router.use(auth);
 
