@@ -110,7 +110,7 @@ class ProductService {
     try {
       return await Product.findById(id)
         .populate("storeId", "name")
-        .populate("categories", "name");
+        .populate("categories", "name").populate("feedBack.userId");
     } catch (error) {
       throw error;
     }
