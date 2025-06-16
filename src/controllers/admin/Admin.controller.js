@@ -241,7 +241,7 @@ class AdminController {
           (sum, item) => sum + (item.discountApplied || 0),
           0
         );
-        const voucherCommission = Math.round(totalVoucher * 0.2);
+        const voucherCommission = Math.round(totalVoucher * 0.05);
 
         return {
           _id: order._id,
@@ -297,7 +297,51 @@ class AdminController {
   // Xuất Excel danh sách đơn hàng
   async exportOrdersExcel(req, res) {
     try {
-      const orders = await Order.find({})
+      const { storeId, year, month, week } = req.query;
+      const filter = {};
+
+      // Validate storeId if provided
+      if (storeId) {
+        const store = await Store.findById(storeId);
+        if (!store) {
+          return res.status(400).json({ error: "Không tìm thấy cửa hàng" });
+        }
+        filter.storeId = storeId;
+      }
+
+      // Build date filter
+      if (year) {
+        const startDate = new Date(`${year}-01-01T00:00:00.000Z`);
+        const endDate = new Date(`${year}-12-31T23:59:59.999Z`);
+
+        if (month) {
+          startDate.setMonth(parseInt(month) - 1);
+          endDate.setMonth(parseInt(month) - 1);
+          endDate.setDate(
+            new Date(
+              startDate.getFullYear(),
+              startDate.getMonth() + 1,
+              0
+            ).getDate()
+          );
+
+          if (week) {
+            const weekStart = new Date(startDate);
+            weekStart.setDate(1 + (parseInt(week) - 1) * 7);
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            weekEnd.setHours(23, 59, 59, 999);
+            filter.createdAt = { $gte: weekStart, $lte: weekEnd };
+          } else {
+            filter.createdAt = { $gte: startDate, $lte: endDate };
+          }
+        } else {
+          filter.createdAt = { $gte: startDate, $lte: endDate };
+        }
+      }
+
+      // Get orders with populated fields
+      const orders = await Order.find(filter)
         .sort({ createdAt: -1 })
         .populate("userId", "username email")
         .populate("storeId", "name")
@@ -307,10 +351,37 @@ class AdminController {
           "code discountType discountValue"
         );
 
-      const ExcelJS = require("exceljs");
+      // Get store name for filename
+      let storeName = "HeThong";
+      if (storeId) {
+        const store = await Store.findById(storeId);
+        if (store) {
+          // Remove accents and special characters from store name
+          storeName = store.name
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zA-Z0-9]/g, "")
+            .replace(/\s+/g, "");
+        }
+      }
+
+      // Generate time label for filename
+      let timeLabel = "";
+      if (year && month && week) {
+        timeLabel = `Tuan${week}_Thang${month}_Nam${year}`;
+      } else if (year && month) {
+        timeLabel = `Thang${month}_Nam${year}`;
+      } else if (year) {
+        timeLabel = `Nam${year}`;
+      } else {
+        timeLabel = "TatCa";
+      }
+
+      // Create Excel workbook
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("Orders");
 
+      // Set columns
       worksheet.columns = [
         { header: "Mã đơn hàng", key: "orderCode", width: 20 },
         { header: "Khách hàng", key: "user", width: 20 },
@@ -327,40 +398,51 @@ class AdminController {
         { header: "Ngày tạo", key: "createdAt", width: 20 },
       ];
 
+      // Add data rows
       orders.forEach((order) => {
         const totalVoucher = order.items.reduce(
           (sum, item) => sum + (item.discountApplied || 0),
           0
         );
-        const voucherCommission = Math.round(totalVoucher * 0.2);
+        const voucherCommission = Math.round(totalVoucher * 0.05);
 
         order.items.forEach((item) => {
           worksheet.addRow({
-            orderCode: order.orderCode,
+            orderCode: order.orderCode || "",
             user: order.userId?.username || "",
             store: order.storeId?.name || "",
-            productName: item.productName,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
+            productName: item.productName || "",
+            quantity: item.quantity || 0,
+            unitPrice: item.unitPrice || 0,
             voucherCode: item.appliedVoucherInfo?.code || "",
-            discountApplied: item.discountApplied,
-            totalAmount: order.totalAmount,
-            totalVoucher,
-            voucherCommission,
-            status: order.status,
-            createdAt: order.createdAt,
+            discountApplied: item.discountApplied || 0,
+            totalAmount: order.totalAmount || 0,
+            totalVoucher: totalVoucher || 0,
+            voucherCommission: voucherCommission || 0,
+            status: order.status || "",
+            createdAt: moment(order.createdAt).format("DD/MM/YYYY HH:mm:ss"),
           });
         });
       });
 
+      // Generate filename
+      const fileName = `BaoCao_${storeName}_${timeLabel}.xlsx`;
+
+      // Set response headers
       res.setHeader(
         "Content-Type",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       );
-      res.setHeader("Content-Disposition", "attachment; filename=orders.xlsx");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${fileName}"`
+      );
+
+      // Write to response
       await workbook.xlsx.write(res);
       res.end();
     } catch (e) {
+      console.error("Export Excel error:", e);
       res.status(500).json({ error: e.message });
     }
   }
