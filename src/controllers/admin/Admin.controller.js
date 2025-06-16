@@ -300,8 +300,8 @@ class AdminController {
       const { storeId, year, month, week } = req.query;
       const filter = {};
 
-      // Validate storeId if provided
-      if (storeId) {
+      // Validate storeId if provided and not empty
+      if (storeId && storeId !== "undefined" && storeId !== "") {
         const store = await Store.findById(storeId);
         if (!store) {
           return res.status(400).json({ error: "Không tìm thấy cửa hàng" });
