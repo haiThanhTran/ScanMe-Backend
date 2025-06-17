@@ -86,7 +86,7 @@ const OrderController = {
   createFeedBack: async (req, res) => {
     try {
       const userId = req.user.id;
-      const feedBack = req.body;
+      const { orderId, feedBack } = req.body;
 
       if (!orderId || rating === undefined) {
         return res

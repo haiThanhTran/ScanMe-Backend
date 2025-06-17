@@ -30,7 +30,7 @@ const ProductService = {
                 .skip(skip)
                 .limit(limit)
                 .populate('storeId')
-                .populate('categories'),
+                .populate('categories').sort({ createdAt: -1 }),
             Product.countDocuments({ storeId: store._id })
         ]);
 
