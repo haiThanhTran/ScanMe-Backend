@@ -417,6 +417,13 @@ const OrderService = {
         throw new Error("Chỉ có thể gửi phản hồi cho đơn hàng đã hoàn thành.");
       }
 
+      await Order.findByIdAndUpdate(
+        orderId,
+        { $set: { paymentStatus: "paid" } },
+        { new: true }
+      );
+
+
       for (const item of order.items) {
         const product = await Product.findById(item.productId._id);
         if (!product) continue;
