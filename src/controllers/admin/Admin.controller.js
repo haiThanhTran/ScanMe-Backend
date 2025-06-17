@@ -227,6 +227,7 @@ class AdminController {
         .populate("userId", "username email")
         .populate("storeId", "name")
         .populate("items.productId", "name")
+        .populate("shippingInfo", "name phone")
         .populate(
           "items.appliedVoucherInfo.voucherId",
           "code discountType discountValue"
@@ -280,6 +281,7 @@ class AdminController {
           paymentMethod: order.paymentMethod,
           paymentStatus: order.paymentStatus,
           createdAt: order.createdAt,
+          shippingInfo: order.shippingInfo,
         };
       });
 
@@ -346,6 +348,7 @@ class AdminController {
         .populate("userId", "username email")
         .populate("storeId", "name")
         .populate("items.productId", "name")
+        .populate("shippingInfo", "name")
         .populate(
           "items.appliedVoucherInfo.voucherId",
           "code discountType discountValue"
@@ -409,7 +412,7 @@ class AdminController {
         order.items.forEach((item) => {
           worksheet.addRow({
             orderCode: order.orderCode || "",
-            user: order.userId?.username || "",
+            user: order.shippingInfo?.name || "",
             store: order.storeId?.name || "",
             productName: item.productName || "",
             quantity: item.quantity || 0,
