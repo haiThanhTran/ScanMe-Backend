@@ -413,7 +413,7 @@ const OrderService = {
       const order = await Order.findOne({ _id: orderId, userId });
       if (!order) throw new Error("Không tìm thấy đơn hàng.");
 
-      if (order.status !== "completed") {
+      if (order.status !== "confirmed") {
         throw new Error("Chỉ có thể gửi phản hồi cho đơn hàng đã hoàn thành.");
       }
 

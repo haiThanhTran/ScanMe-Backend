@@ -86,9 +86,9 @@ const OrderController = {
   createFeedBack: async (req, res) => {
     try {
       const userId = req.user.id;
-      const { orderId, feedBack } = req.body;
+      const { orderId, feedback } = req.body;
 
-      if (!orderId || rating === undefined) {
+      if (!orderId || feedback?.rating === undefined) {
         return res
           .status(400)
           .json({ success: false, message: "Thiếu thông tin." });
@@ -97,13 +97,13 @@ const OrderController = {
       const feedbackResult = await OrderService.feedBackOrder(
         orderId,
         userId,
-        feedBack
+        feedback
       );
 
       res.status(201).json({ success: true, data: feedbackResult });
     } catch (error) {
       console.error("Error in OrderController.createFeedBack:", error.message);
-      res.status(400).json({ success: false, message: error.message });
+      res.status(400).json({ success: false, message: error.message }); ``
     }
   }
 };
