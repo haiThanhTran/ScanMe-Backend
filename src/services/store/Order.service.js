@@ -18,7 +18,7 @@ const OrderService = {
                 .skip(skip)
                 .limit(limit)
                 .populate('userId')
-                .populate('items.productId'),
+                .populate('items.productId').sort({ createdAt: -1 }),
             Order.countDocuments({ storeId: store._id })
         ]);
 

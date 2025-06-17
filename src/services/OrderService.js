@@ -418,7 +418,7 @@ const OrderService = {
       }
 
       for (const item of order.items) {
-        const product = await Product.findById(item.productId);
+        const product = await Product.findById(item.productId._id);
         if (!product) continue;
 
         if (!product.feedBack) {
@@ -427,7 +427,7 @@ const OrderService = {
 
         product.feedBack.push({
           userId,
-          comment: feedback.comment,
+          comment: feedback.comment ? feedback.comment : "",
           rating: feedback.rating,
           createdAt: new Date(),
         });
