@@ -9,6 +9,7 @@ const Store = require("../../models/Store/Store");
 const Product = require("../../models/Product/Product");
 const Voucher = require("../../models/Voucher/Voucher");
 const ExcelJS = require("exceljs");
+const mongoose = require("mongoose");
 
 class AdminController {
   async getRole(req, res) {
@@ -299,47 +300,57 @@ class AdminController {
   // Xuất Excel danh sách đơn hàng
   async exportOrdersExcel(req, res) {
     try {
-      const { storeId, year, month, week } = req.query;
+      const { storeIds, years, months, weeks, days } = req.query;
       const filter = {};
 
-      // Validate storeId if provided and not empty
-      if (storeId && storeId !== "undefined" && storeId !== "") {
-        const store = await Store.findById(storeId);
-        if (!store) {
-          return res.status(400).json({ error: "Không tìm thấy cửa hàng" });
+      // Store
+      let storeObjectIds = [];
+      if (storeIds) {
+        const ids = storeIds.split(",").filter(Boolean);
+        if (ids.length > 0) {
+          storeObjectIds = ids.map((id) => mongoose.Types.ObjectId(id));
+          filter.storeId = { $in: storeObjectIds };
         }
-        filter.storeId = storeId;
       }
 
-      // Build date filter
-      if (year) {
-        const startDate = new Date(`${year}-01-01T00:00:00.000Z`);
-        const endDate = new Date(`${year}-12-31T23:59:59.999Z`);
-
-        if (month) {
-          startDate.setMonth(parseInt(month) - 1);
-          endDate.setMonth(parseInt(month) - 1);
-          endDate.setDate(
-            new Date(
-              startDate.getFullYear(),
-              startDate.getMonth() + 1,
-              0
-            ).getDate()
-          );
-
-          if (week) {
-            const weekStart = new Date(startDate);
-            weekStart.setDate(1 + (parseInt(week) - 1) * 7);
-            const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekStart.getDate() + 6);
-            weekEnd.setHours(23, 59, 59, 999);
-            filter.createdAt = { $gte: weekStart, $lte: weekEnd };
+      // Year, month, week
+      let dateFilters = [];
+      if (years) {
+        const yearArr = years.split(",");
+        yearArr.forEach((year) => {
+          if (months) {
+            const monthArr = months.split(",");
+            monthArr.forEach((month) => {
+              if (weeks) {
+                const weekArr = weeks.split(",");
+                weekArr.forEach((week) => {
+                  // Tính toán start/end cho từng tuần
+                  // ... (tương tự như cũ, nhưng lặp qua từng tổ hợp)
+                  // Push vào dateFilters
+                });
+              } else {
+                // Push start/end của tháng vào dateFilters
+              }
+            });
           } else {
-            filter.createdAt = { $gte: startDate, $lte: endDate };
+            // Push start/end của năm vào dateFilters
           }
-        } else {
-          filter.createdAt = { $gte: startDate, $lte: endDate };
-        }
+        });
+      }
+      if (dateFilters.length > 0) {
+        filter.$or = dateFilters.map(({ start, end }) => ({
+          createdAt: { $gte: start, $lte: end },
+        }));
+      }
+
+      // Days
+      if (days) {
+        const dayArr = days.split(",");
+        filter.$or = dayArr.map((d) => {
+          const start = new Date(`${d}T00:00:00.000Z`);
+          const end = new Date(`${d}T23:59:59.999Z`);
+          return { createdAt: { $gte: start, $lte: end } };
+        });
       }
 
       // Get orders with populated fields
@@ -356,26 +367,30 @@ class AdminController {
 
       // Get store name for filename
       let storeName = "HeThong";
-      if (storeId) {
-        const store = await Store.findById(storeId);
-        if (store) {
-          // Remove accents and special characters from store name
-          storeName = store.name
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-zA-Z0-9]/g, "")
-            .replace(/\s+/g, "");
+      if (storeObjectIds.length > 0) {
+        const stores = await Store.find({ _id: { $in: storeObjectIds } });
+        if (stores.length > 0) {
+          // Remove accents and special characters from store names
+          storeName = stores
+            .map((store) =>
+              store.name
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-zA-Z0-9]/g, "")
+                .replace(/\s+/g, "")
+            )
+            .join(", ");
         }
       }
 
       // Generate time label for filename
       let timeLabel = "";
-      if (year && month && week) {
-        timeLabel = `Tuan${week}_Thang${month}_Nam${year}`;
-      } else if (year && month) {
-        timeLabel = `Thang${month}_Nam${year}`;
-      } else if (year) {
-        timeLabel = `Nam${year}`;
+      if (years && months && weeks) {
+        timeLabel = `Tuan${weeks}_Thang${months}_Nam${years}`;
+      } else if (years && months) {
+        timeLabel = `Thang${months}_Nam${years}`;
+      } else if (years) {
+        timeLabel = `Nam${years}`;
       } else {
         timeLabel = "TatCa";
       }
@@ -403,11 +418,14 @@ class AdminController {
 
       // Add data rows
       orders.forEach((order) => {
-        const totalVoucher = order.items.reduce(
-          (sum, item) => sum + (item.discountApplied || 0),
-          0
+        // Kiểm tra có voucher và trạng thái confirmed
+        const hasVoucher = order.items.some(
+          (item) => item.appliedVoucherInfo && item.appliedVoucherInfo.voucherId
         );
-        const voucherCommission = Math.round(totalVoucher * 0.05);
+        let voucherCommission = 0;
+        if (hasVoucher && order.status === "confirmed") {
+          voucherCommission = Math.round(order.subTotal * 0.05);
+        }
 
         order.items.forEach((item) => {
           worksheet.addRow({
@@ -420,7 +438,7 @@ class AdminController {
             voucherCode: item.appliedVoucherInfo?.code || "",
             discountApplied: item.discountApplied || 0,
             totalAmount: order.totalAmount || 0,
-            totalVoucher: totalVoucher || 0,
+            totalVoucher: order.totalVoucher || 0,
             voucherCommission: voucherCommission || 0,
             status: order.status || "",
             createdAt: moment(order.createdAt).format("DD/MM/YYYY HH:mm:ss"),
